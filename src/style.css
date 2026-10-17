@@ -57,6 +57,16 @@ h2 {
   margin: 0;
 }
 
+.new-best {
+  color: var(--correct);
+  font-weight: 700;
+}
+
+.storage-status {
+  color: var(--wrong);
+  margin-bottom: 0;
+}
+
 .timer {
   margin-top: 0.75rem;
 }

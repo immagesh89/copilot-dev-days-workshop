@@ -11,6 +11,7 @@
     <section id="start-screen">
       <h1>Dev Days Quiz</h1>
       <p class="lead">Nine quick questions about Git, GitHub, Actions and Copilot.</p>
+      <p id="start-best-score" class="muted"></p>
       <button id="start-btn" class="primary">Start quiz</button>
     </section>
 
@@ -27,8 +28,11 @@
       <h2>Quiz complete</h2>
       <p id="score-text" class="lead"></p>
       <p id="grade-text"></p>
+      <p id="result-best-score" class="muted"></p>
+      <p id="new-best-message" class="new-best" aria-live="polite" hidden>New best score! Great work!</p>
       <button id="restart-btn" class="primary">Play again</button>
     </section>
+    <p id="storage-status" class="storage-status" role="status" aria-live="polite" hidden></p>
   </main>
 
   <!-- Order matters: questions and logic load before the UI code -->
