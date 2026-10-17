@@ -1,7 +1,8 @@
 // UI code: connects the quiz logic (quiz.js) to the page (index.html).
 
 const QUESTION_TIME_SECONDS = 15;
-const state = { questions: [], current: 0, score: 0, timeLeft: QUESTION_TIME_SECONDS };
+let state = createQuiz([]);
+let timeLeft = QUESTION_TIME_SECONDS;
 let countdownInterval = null;
 let questionCompleted = false;
 
@@ -31,15 +32,13 @@ function stopCountdown() {
 }
 
 function updateTimerDisplay() {
-  timerText.textContent = formatTimeLeft(state.timeLeft);
-  timerText.classList.toggle("timer--urgent", state.timeLeft <= 5);
+  timerText.textContent = formatTimeLeft(timeLeft);
+  timerText.classList.toggle("timer--urgent", timeLeft <= 5);
 }
 
 function startQuiz() {
   stopCountdown();
-  state.questions = shuffle(QUESTIONS);
-  state.current = 0;
-  state.score = 0;
+  state = createQuiz(shuffle(QUESTIONS));
   showScreen(quizScreen);
   renderQuestion();
 }
@@ -47,7 +46,7 @@ function startQuiz() {
 function renderQuestion() {
   stopCountdown();
   questionCompleted = false;
-  state.timeLeft = QUESTION_TIME_SECONDS;
+  timeLeft = QUESTION_TIME_SECONDS;
   updateTimerDisplay();
 
   const question = state.questions[state.current];
@@ -68,9 +67,9 @@ function renderQuestion() {
   });
 
   countdownInterval = setInterval(() => {
-    state.timeLeft--;
+    timeLeft--;
     updateTimerDisplay();
-    if (state.timeLeft === 0) {
+    if (timeLeft === 0) {
       stopCountdown();
       timeOutQuestion();
     }
@@ -83,11 +82,12 @@ function selectAnswer(selectedIndex, selectedButton) {
   stopCountdown();
 
   const question = state.questions[state.current];
+  const result = answerQuestion(state, selectedIndex);
+  state = result.state;
   const buttons = optionsList.querySelectorAll("button");
   buttons.forEach((button) => (button.disabled = true));
 
-  if (isCorrect(question, selectedIndex)) {
-    state.score++;
+  if (result.correct) {
     selectedButton.classList.add("correct");
     feedbackText.textContent = "Correct!";
   } else {
@@ -115,8 +115,8 @@ function timeOutQuestion() {
 
 function nextQuestion() {
   stopCountdown();
-  state.current++;
-  if (state.current < state.questions.length) {
+  state = advanceQuestion(state);
+  if (!isQuizFinished(state)) {
     renderQuestion();
   } else {
     showResults();

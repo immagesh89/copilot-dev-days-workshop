@@ -2,7 +2,68 @@
 // Run them with:  npm test
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { shuffle, isCorrect, calculatePercentage, formatTimeLeft, getGrade, getFeedbackMessage } = require("../src/quiz.js");
+const {
+  createQuiz,
+  answerQuestion,
+  advanceQuestion,
+  isQuizFinished,
+  shuffle,
+  isCorrect,
+  calculatePercentage,
+  formatTimeLeft,
+  getGrade,
+  getFeedbackMessage,
+} = require("../src/quiz.js");
+
+test("createQuiz starts with the supplied questions and zero progress", () => {
+  const questions = [{ answer: 0 }];
+  const state = createQuiz(questions);
+
+  assert.deepEqual(state, { questions, current: 0, score: 0 });
+  assert.notEqual(state.questions, questions);
+});
+
+test("answerQuestion increments the score and returns true when the answer is correct", () => {
+  const original = createQuiz([{ answer: 1 }]);
+  const result = answerQuestion(original, 1);
+
+  assert.deepEqual(result, {
+    state: { questions: original.questions, current: 0, score: 1 },
+    correct: true,
+  });
+  assert.equal(original.score, 0);
+});
+
+test("answerQuestion preserves the score when the answer is incorrect", () => {
+  const original = { questions: [{ answer: 1 }], current: 0, score: 2 };
+  const result = answerQuestion(original, 0);
+
+  assert.equal(result.correct, false);
+  assert.equal(result.state.score, 2);
+  assert.equal(original.score, 2);
+  assert.notEqual(result.state, original);
+});
+
+test("advanceQuestion moves to the next question without changing the original state", () => {
+  const original = createQuiz([{ answer: 0 }, { answer: 1 }]);
+  const next = advanceQuestion(original);
+
+  assert.equal(next.current, 1);
+  assert.equal(original.current, 0);
+});
+
+test("isQuizFinished returns false before the final question has advanced", () => {
+  assert.equal(isQuizFinished(createQuiz([{ answer: 0 }])), false);
+});
+
+test("isQuizFinished returns true after the final question has advanced", () => {
+  const finished = advanceQuestion(createQuiz([{ answer: 0 }]));
+  assert.equal(isQuizFinished(finished), true);
+});
+
+test("isQuizFinished returns true for a quiz with no questions", () => {
+  assert.equal(isQuizFinished(createQuiz([])), true);
+});
 
 test("isCorrect returns true for the right answer", () => {
   assert.equal(isCorrect({ answer: 2 }, 2), true);
