@@ -2,7 +2,7 @@
 // Run them with:  npm test
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { shuffle, isCorrect, calculatePercentage, formatTimeLeft, getGrade } = require("../src/quiz.js");
+const { shuffle, isCorrect, calculatePercentage, formatTimeLeft, getGrade, getFeedbackMessage } = require("../src/quiz.js");
 
 test("isCorrect returns true for the right answer", () => {
   assert.equal(isCorrect({ answer: 2 }, 2), true);
@@ -41,4 +41,32 @@ test("shuffle keeps every item and does not change the original array", () => {
 
 test("getGrade gives an A for exactly 90%", () => {
   assert.equal(getGrade(90), "A");
+});
+
+test("getGrade gives a B for exactly 75%", () => {
+  assert.equal(getGrade(75), "B");
+});
+
+test("getGrade gives a C for exactly 50%", () => {
+  assert.equal(getGrade(50), "C");
+});
+
+test("getFeedbackMessage returns an excellent message for an A", () => {
+  assert.equal(getFeedbackMessage("A"), "Excellent work!");
+});
+
+test("getFeedbackMessage returns an encouraging message for a B", () => {
+  assert.equal(getFeedbackMessage("B"), "Great job!");
+});
+
+test("getFeedbackMessage returns an encouraging message for a C", () => {
+  assert.equal(getFeedbackMessage("C"), "Good effort!");
+});
+
+test("getFeedbackMessage encourages practice for an unrecognized grade", () => {
+  assert.equal(getFeedbackMessage("F"), "Keep practicing—you'll get there!");
+});
+
+test("getFeedbackMessage encourages practice for a null grade", () => {
+  assert.equal(getFeedbackMessage(null), "Keep practicing—you'll get there!");
 });
