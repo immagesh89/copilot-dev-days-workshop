@@ -63,6 +63,13 @@ function calculatePercentage(score, total) {
 }
 
 /**
+ * Returns whether the current percentage beats the previous best score.
+ */
+function isNewBestScore(current, best) {
+  return best === null || current > best;
+}
+
+/**
  * Formats the remaining countdown time for display.
  */
 function formatTimeLeft(seconds) {
@@ -100,6 +107,7 @@ if (typeof module !== "undefined" && module.exports) {
     shuffle,
     isCorrect,
     calculatePercentage,
+    isNewBestScore,
     formatTimeLeft,
     getGrade,
     getFeedbackMessage,
